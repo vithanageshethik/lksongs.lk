@@ -10,17 +10,18 @@ HTML_FILE = "index.html"
 def clean_youtube_title(title):
     title = re.sub(r'\[.*?\]|\(.*?\)', '', title).strip()
     parts = []
+    
     if " - " in title:
         parts = title.split(" - ")
     elif " | " in title:
         parts = title.split(" | ")
         
     if len(parts) >= 2:
-        artist = parts[0].strip()
-        song_title = parts[1].strip()
+        song_title = parts[0].strip()
+        artist = parts[1].strip()
     else:
-        artist = "Unknown Artist"
         song_title = title.strip()
+        artist = "Unknown Artist"
         
     return song_title, artist
 
@@ -58,12 +59,13 @@ def extract_youtube_data(url):
             "youtubeUrl": f"https://youtu.be/{video_id}",
             "audioUrl": "downloaded_song.mp3",
             "karaokeSiteUrl": "",
-            "lyrics": "",   # මේවා පසුව පිරවේ
-            "chords": "",   # මේවා පසුව පිරවේ
+            "lyrics": "",
+            "chords": "",
             "lyricsFile": "lyrics.txt",
             "chordsFile": "chords.pdf",
             "trending": True,
-            "isAvailableOnSite": True
+            "isAvailableOnSite": True,
+            "views": 0
         }
 
 def inject_and_push_to_cloud(new_song):
@@ -115,16 +117,29 @@ if __name__ == "__main__":
         try:
             print("⏳ YouTube එකෙන් දත්ත ලබාගනිමින් පවතී...")
             song_data = extract_youtube_data(yt_url)
-            print(f"👁️ හමු වූ විස්තර: {song_data['title']} | Artist: {song_data['artist']}")
+            print("-" * 50)
+            print("👁️ YouTube එකෙන් හඳුනාගත් දත්ත පරීක්ෂා කරන්න:")
+            
+            print(f"  [වත්මන් Title එක]: {song_data['title']}")
+            user_title = input("👉 නිවැරදි සින්දුවේ නම (Title) ඇතුළත් කරන්න (හරි නම් නිකන්ම Enter කරන්න): ").strip()
+            if user_title:
+                song_data['title'] = user_title
+                
+            print(f"  [වත්මන් Artist එක]: {song_data['artist']}")
+            user_artist = input("👉 නිවැරදි ගායකයාගේ නම (Artist) ඇතුළත් කරන්න (හරි නම් නිකන්ම Enter කරන්න): ").strip()
+            if user_artist:
+                song_data['artist'] = user_artist
+
+            print("-" * 50)
+            print(f"🔥 අවසන් තීරණය: {song_data['title']} | Artist: {song_data['artist']}")
             print("-" * 50)
             
-            # Lyrics සහ Chords Manual ඇතුළත් කිරීම (Skip කිරීමටද හැකිය)
             lyrics_input = get_multiline_input(f"📝 1. '{song_data['title']}' ගීතයේ පද (Lyrics) මෙතනට Paste කරන්න:")
             print("-" * 50)
             chords_input = get_multiline_input(f"🎸 2. '{song_data['title']}' ගීතයේ Chords මෙතනට Paste කරන්න:")
             
-            song_data["lyrics"] = lyrics_input
-            song_data["chords"] = chords_input
+            song_data["lyrics"] = lyrics_input if lyrics_input else "🚫 මෙම ගීතය සඳහා පද (Lyrics) තවමත් ඇතුළත් කර නැත."
+            song_data["chords"] = chords_input if chords_input else "🚫 මෙම ගීතය සඳහා Chords තවමත් ඇතුළත් කර නැත."
             
             inject_and_push_to_cloud(song_data)
         except Exception as e:

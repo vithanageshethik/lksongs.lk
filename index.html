@@ -141,6 +141,7 @@
         .song-details { padding: 15px; }
         .song-details h3 { margin: 0 0 8px 0; font-size: 16px; font-weight: 600; color: #fff; }
         .song-details p { margin: 0; font-size: 13px; color: var(--text-gray); }
+        .view-badge { font-size: 11px; color: #888; display: block; margin-top: 5px; }
 
         .play-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #ff4757; font-size: 20px; transition: 0.3s; }
         .song-card:hover .play-overlay { background: var(--primary-red); color: white; }
@@ -175,11 +176,8 @@
         .detail-right h1 { margin: 0 0 10px 0; font-size: 32px; color: white; }
         .meta-info { display: flex; flex-wrap: wrap; gap: 20px; color: var(--text-gray); font-size: 14px; margin-bottom: 25px; border-bottom: 1px solid #232a38; padding-bottom: 15px; }
 
-        .player-card { background: #1e2430; padding: 15px; border-radius: 12px; margin-bottom: 25px; border-left: 4px solid var(--primary-red); }
-        audio { width: 100%; }
-
         /* 🧱 3D Action Buttons Grid */
-        .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 15px; }
         .action-btn { 
             display: flex; align-items: center; justify-content: center; gap: 10px; padding: 15px; border: none; border-radius: 25px; font-weight: 700; cursor: pointer; text-decoration: none; font-size: 15px; 
             position: relative;
@@ -221,14 +219,14 @@
         .yt-preview-card .thumb-wrapper { padding-top: 56.25%; }
         .yt-badge-large { position: absolute; bottom: 15px; right: 15px; background: #ff0000; color: white; padding: 8px 16px; font-weight: bold; border-radius: 25px; font-size: 14px; }
 
-        /* 📄 Official English Legal Documents (100% AdSense Compliant) */
+        /* 📄 Legal Documents */
         .info-card { background: #151922; border: 1px solid #232a38; padding: 40px; border-radius: 16px; line-height: 1.8; box-shadow: 0 0 25px rgba(0,0,0,0.5); }
         .info-card h1 { color: var(--primary-red); margin-top: 0; border-bottom: 2px solid #232a38; padding-bottom: 10px; font-size: 26px; }
         .info-card h2 { color: #00cec9; font-size: 18px; margin-top: 25px; border-left: 3px solid var(--primary-red); padding-left: 10px; }
         .info-card p, .info-card li { color: #e0e0e0; font-size: 15px; }
         .info-card ul { padding-left: 20px; }
 
-        /* 📨 Contact Form Layout */
+        /* 📨 Contact Form */
         .contact-container { max-width: 600px; margin: 0 auto; background: #151922; border: 1px solid #232a38; border-radius: 16px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .contact-container h1 { font-size: 28px; font-weight: 700; color: #fff; margin: 0 0 10px 0; text-align: center; }
         .contact-container p { color: #aaa; text-align: center; margin: 0 0 25px 0; font-size: 14px; }
@@ -240,7 +238,6 @@
         .btn-submit-form { width: 100%; padding: 15px; background: #5c0919; color: white; border: none; border-radius: 25px; font-weight: bold; font-size: 15px; cursor: pointer; transition: all 0.1s ease; box-shadow: 0 4px 0px #30020a; position:relative; top:0; }
         .btn-submit-form:hover { background: var(--primary-red); box-shadow: 0 4px 0px #b3323d; }
 
-        /* 🌐 Perfect Fixed-Bottom Footer Layout */
         footer { 
             background-color: #11141a; 
             padding: 25px 20px; 
@@ -317,7 +314,7 @@
         <div id="regularContentWrapper">
             <section class="content-section" id="trendingSection">
                 <div class="section-title">
-                    <h2><i class="fa fa-fire" style="color: #ff4757;"></i> Trending Now</h2>
+                    <h2><i class="fa fa-fire" style="color: #ff4757;"></i> Trending Now (Most Viewed)</h2>
                     <div class="line"></div>
                 </div>
                 <div class="song-grid" id="trendingGrid"></div>
@@ -360,14 +357,9 @@
             <div class="detail-right">
                 <h1 id="detailTitle">Song Title</h1>
                 <div class="meta-info">
-                    <span id="detailArtist"><i class="fa fa-user"></i> Artist</span>
+                    <span id="detailArtist"><i class="fa fa-user" style="cursor:pointer;"></i> Artist</span>
                     <span id="detailYear"><i class="fa fa-calendar-alt"></i> Year</span>
                     <span id="detailDuration"><i class="fa fa-clock"></i> Duration</span>
-                </div>
-
-                <div class="player-card">
-                    <h3><i class="fa fa-play-circle" style="color:var(--primary-red);"></i> Listen Original MP3</h3>
-                    <audio id="detailAudio" controls></audio>
                 </div>
 
                 <div class="actions-grid">
@@ -391,8 +383,7 @@
         <div class="yt-preview-section animate-fade">
             <h2><i class="fab fa-youtube" style="color: #ff0000;"></i> Official YouTube Video Preview</h2>
             <div class="yt-preview-card" id="detailYtCard">
-                <div class="thumb-wrapper" id="ytIframeContainer">
-                    </div>
+                <div class="thumb-wrapper" id="ytIframeContainer"></div>
             </div>
         </div>
     </div>
@@ -500,63 +491,14 @@
 
     <script>
         // 🚀 DATABASE REPOSITORY MATRIX: [DATA ZERO - CLEAN READY FOR AUTOMATION]
-        const songs = [{
-                            "id": "s_zx3wYHSqqiI",
-                            "title": "Kawiya  Official Music Video",
-                            "artist": "Vidula Ravishara",
-                            "year": "2019",
-                            "duration": "6:14",
-                            "thumbnail": "https://img.youtube.com/vi/zx3wYHSqqiI/maxresdefault.jpg",
-                            "youtubeUrl": "https://youtu.be/zx3wYHSqqiI",
-                            "audioUrl": "downloaded_song.mp3",
-                            "karaokeSiteUrl": "",
-                            "lyrics": "බොහෝ පෙම් කවි ලියු පසුවද සියුම් කැපුමක් මෙන් රැදි....\nනොලි කවියක් තිබිය නොහැකිද හදේ යමි රිදුමක් දිදි....\n\nතියුනු රුදු සැත් ලෙසින් සැමරුම් සෙමෙන් පාරන මුත් ඇනි\nසිදිනු  හැකිවෙද කෙලෙස කිකලෙක එවන් හද පාරන බැමි…..\n\nඉතින් එබැවින් නවතිමි….\nහදින් පිටමන් නොකරමි…..\n\nනිතින් ගිනිගත් හදින් දැවෙමින් දරා ඉමිහිරි වේදනාවන්...\nපෙමින් සගවා තබා ගන්නේමි නොලි ඒ ගීතිකාවන්....\n\nසදකාලික තැවුල් පොදියක රැදි හද පෙලුවත් නිති...\nලියා අවසන් කවක් කෙලවර මැකි වියැකි යා නොදි....\n\nඉතින් එබැවින් නවතිමි….\nහදින් පිටමන් නොකරමි…..",
-                            "chords": "[Intro]\n------------------------------------------------------------\n|G   |Em  |C/D  |Em  |\n|G   |Em  |C/D  |D   |\n|G   |-   |-    |-   | \n\n[1st Verse]\n------------------------------------------------------------\nG             D             Em            Bm\nBoho pem kawi liyu pasuwada siyum kapumak men randi\nG            D                Em          Bm\nNoli kawiyak thibiya nohakida hade yam ridumak didi\n\n[Pre-chorus]  \n------------------------------------------------------------\nC                 D             E             G\nThiyunu rudu sath lesin samarum semen paarana muth ani\nEm              Bm               C           D           D\nSindinu hakiweda kelesa kikaleka ewan hada paarana bamii\n\n[Chorus]\n------------------------------------------------------------\nG        Am        Em \nEthn ebawin nawathimi….\n  G       D         Em\nHadin pitaman nokarami…..\n\n[2nd Verse]\n------------------------------------------------------------\nG          Bm     Em      Bm     C          D         Em\nNithin ginigath hadin dawemin daraa imihiri wedanawan\nG         Bm           Em   Bm    C     D      Em\nPemin sagawa dara gannemi noli aa geethikaawan...\n\nPre-chorus\nC           D               Em             G\nsadakaalika thawul podiyaka randi hada peluwath nithi.. \nEm            Bm            C           D         D\nLiyaa awasan kawak kelawara maki wiyaki yaa nodi\n\n[Chorus]\n------------------------------------------------------------\nEthn ebawin nawathimi….\n\n[Interlude] \n------------------------------------------------------------\n|C   |G7  |D   |Em  |\n|C   |D   |Am  |Em  |\n|Bm  |C   |D   |Em  |\n|Bm  |C   |D   |D   |\n\n\n Csus2      G       Dsus4 \nEthn ebawin nawathimi.....\n  G       D         Em\nHadin pitaman nokarami....\n\n[Outro]\n-------------------------------------------------------------\n|G  |A   |Dsus4  |",
-                            "lyricsFile": "lyrics.txt",
-                            "chordsFile": "chords.pdf",
-                            "trending": true,
-                            "isAvailableOnSite": true
-            },
-{
-                            "id": "s_0wlKlUaXjTk",
-                            "title": "Jo Perera x Jeewaka Weerasinghe",
-                            "artist": "Vaahe \"වාහේ\"",
-                            "year": "2026",
-                            "duration": "3:50",
-                            "thumbnail": "https://img.youtube.com/vi/0wlKlUaXjTk/maxresdefault.jpg",
-                            "youtubeUrl": "https://youtu.be/0wlKlUaXjTk",
-                            "audioUrl": "downloaded_song.mp3",
-                            "karaokeSiteUrl": "",
-                            "lyrics": "මී ගස් හෙවනේ අපි දුව පැන ළියදේ\nමතකේ ගෙනයයි ඒ බාලේ\nමදනල අතරේ නුඹෙ සුවඳයි හෙව්වේ\nහිත ගාව හිඳිමී පෙර සේ\n\nනුඹ දැක මනදොළ පිනවෙන යාමේ\nනෝනේ \nඇහුණද හිත කවි කියනවා මාගේ\nඈගේ \nළැම සෙලවෙනකොට ඉවසුම් නෑනේ\nමාමේ\nදෙනවද දුව කරගන්නට වාහේ\n\nරබන් පදේ හඬ රැව්දෙන\nඅලුත් හාලේ මංගල්ලෙට\nඇය එනවා හද ඉපිලී යනවා\nරෑට රෑට හීන ගේන\nහැබැහින් ඈ දුටුව දාට\nඑරබදු මල් හිත ඇතුලේ පිපුණා\n\nමදුරස ආදරේ \nමම පතමී දිවියේ\nවිඳිනෙමි ජීවිතේ\nනුඹ සමගින් නිබඳේ\nහී සර දෙන ඈ නෙත ළඟ\nරන්දා පෙම් රසේ මාගේ",
-                            "chords": "Original Key B\nPlace the capo on 4th fret\n\n[Intro]\n\nG- Em- C- D\n\nG- Em- C- D\nThanam Dena...\n\nG- Em- Am Bm C D\nThanam Dena...\n\n\n[Verse]\n\nG                    Em\nMee gas hewane.. Api duwa pana liyade\nC                 D\nMathake genayai e baale\nG                       Em \nMadanala athare.. Numbe suwadai hewuwe\nC\nHitha gawa hindimi pera se..\n\n\n[Chorus]\n\nG                            Em\nNumba daka manadola pinawena yaame..None\nC                           D\nAhunada hitha kavi kiyanawa mage..Ege\nG                        Em\nLema selawenakota iwasum naane..Maame\nC                         D\nDenawada duwa karagannata vaahe\n\n\nG- Em- C- D\nThanam Dena... //\n\nAm Bm C D\n\n\n[Verse]\n\nG\nRaban pade handa rewdena\nEm\nAluth haale mangalleta\nC              D\nEya enawa hada ipili yanawa\nG\nRaata raata heena gena\nEm\nHabehin eya dutu daata\nC                 D\nErabadu mal hitha athule pipuna\nB7           C\nMadurasa aadare\n     D\nMama pathami diviye\nB7             C\nVindinemi jeewithe\n       D\nNumba samagin nibade\nAm            Bm\nHee sara dena e netha laga\nC          D\nRandaa pem rase mage\n\n\nNumba daka manadola...\n\n\n[Ending - Transpose]\n\nA- F#m- D- E",
-                            "lyricsFile": "lyrics.txt",
-                            "chordsFile": "chords.pdf",
-                            "trending": true,
-                            "isAvailableOnSite": true
-            },
-{
-                            "id": "s_TpYCFfYzop8",
-                            "title": "Jo Perera, Cozzy, Jeewaaka Weerasinghe",
-                            "artist": "Mala Panala",
-                            "year": "2024",
-                            "duration": "2:43",
-                            "thumbnail": "https://img.youtube.com/vi/TpYCFfYzop8/maxresdefault.jpg",
-                            "youtubeUrl": "https://youtu.be/TpYCFfYzop8",
-                            "audioUrl": "downloaded_song.mp3",
-                            "karaokeSiteUrl": "",
-                            "lyrics": "මළපැනලා මට බැනලා\nරෑ කෑම දුන්නේ රවලා\nඇයි විමලා? මං ඇහුවා\nදැං කියපංකෝ කවුද සරලා\n\nහිත ගැහුනා හිරි පිපුණා\nඈ දන්නේ කොහොම මෙව්වා\nකෑ ගහලා මං කිව්වා\nඈ කවුද කින්ද මන්ද දන්නේ නෑ\n\nමගෙ බොරු නෑ කෙල්ලේ\nඔබටයි මේ ප්‍රේමේ\nමං ළංවී සිපගද්දී \nගැහුවේ ඈ කන හරහින්\n\nකාට කියන්නද මේ දුක\nකාට කියන්නද මා\nකාට කියන්නද මේ දුක\nමා විඳිනා මා විඳිනා\n\nකාට කියන්නද මේ දුක\nකාට කියන්නද මා\nකාට කියන්නද මේ දුක\nමා විඳිනා..",
-                            "chords": "[Intro/Inter]\n------------------------------\nCm   Bbsus2  Fm  Gm  //\n\n[Verse ]\n-------------------------------\nCm                  Bbsus2\nmalapanala mata banala\n    Fm               Gm\nrae kaema dunne ravala\n       Cm        Bbsus2\nai vimala man ahuwa\n         Fm               Gm\ndaen kiyapanko kawuda sarala\n         Cm          Bbsus2\nhita gahuna hiri pipuna\n   Fm                 Gm\nae dannema kohoma mewwa\n        Cm        Bbsus2\nkae gahala man kiwwa\n   Fm           Gm\nae kawuda kinda manda danne nae\n\n[Pre-Chorus ]\n-------------------------------\n     Ab         Bbsus2\nmage boru nae kelle\n   Ab        Cm\nobatai me preme\n    Fm         \nman langawi sipagaddi\n    Gm\ngahuwae ae kana harahin\n\n[Chorus]\n-------------------------------\n        Cm   Bbsus2\nmalapanala la la\n       Fm   Gm\nmata banala la la\n       Cm  Bbsus2\nai vimala la la\n        Fm  Gm\nman ahuwa  ohh ho\n    G#          Cm\ntarahen do mage praanae\n     Bbsus2                  \naeta kiwa prema geeta wada nae nae\n    Fm\nnidiyanne man eliye\n   Gm\nai ai ban dora wehuwae\n \nCm  Bbsus2  Fm  Gm\nMmmmm mm//\n\n[Bridge ]\n-------------------------------\nCm\nkata kiyannda me duka\nBbsus2\nkata kiyannda ma\nFm\nkata kiyannda me duka\nAb        Gm\nma widina ma widina //",
-                            "lyricsFile": "lyrics.txt",
-                            "chordsFile": "chords.pdf",
-                            "trending": true,
-                            "isAvailableOnSite": true
-            },
+        const songs = [
         ];
 
         let artists = [];
         let currentOpenSong = null;
 
-        // 📱 Mobile Touch Handler Matrix
+        let localViews = JSON.parse(localStorage.getItem('lksongs_local_views')) || {};
+
         function initMobileGlowAnd3DListeners() {
             const cards = document.querySelectorAll('.song-card, .artist-card, .action-btn, .btn-back, .btn-submit-form');
             cards.forEach(card => {
@@ -569,8 +511,13 @@
         function buildArtistDatabase() {
             const uniqueNames = new Set();
             songs.forEach(song => {
-                const parts = song.artist.split(/ x | X | x/);
-                parts.forEach(p => uniqueNames.add(p.trim()));
+                const parts = song.artist.split(/ x | X | x|,|\+/);
+                parts.forEach(p => {
+                    const cleanedName = p.trim().replace(/['"“”‘’]/g, "");
+                    if(cleanedName !== "") {
+                        uniqueNames.add(cleanedName);
+                    }
+                });
             });
             artists = Array.from(uniqueNames).map((name, idx) => ({ id: `a_${idx}`, name: name }));
         }
@@ -579,6 +526,8 @@
             let clickAction = song.isAvailableOnSite ? `setHashState('song', '${song.id}')` : `window.open('${song.youtubeUrl}', '_blank')`;
             let ytBadge = !song.isAvailableOnSite ? `<div style="position:absolute; top:10px; right:10px; background:#ff0000; color:white; padding:4px 8px; font-size:11px; font-weight:bold; border-radius:4px; z-index:2;"><i class="fab fa-youtube"></i> Watch on YT</div>` : '';
             let animDelay = `animation-delay: ${index * 0.04}s;`;
+            
+            let currentViews = (song.views || 0) + (localViews[song.id] || 0);
 
             return `
                 <div class="song-card animate-fade" onclick="${clickAction}" style="${animDelay}">
@@ -590,6 +539,7 @@
                     <div class="song-details">
                         <h3>${song.title}</h3>
                         <p><i class="fa fa-microphone"></i> ${song.artist} ${song.year ? '('+song.year+')' : ''}</p>
+                        <span class="view-badge"><i class="fa fa-eye"></i> ${currentViews} views</span>
                     </div>
                 </div>`;
         }
@@ -597,7 +547,6 @@
         function renderBaseGrids() {
             const trendingGrid = document.getElementById("trendingGrid");
             const sinhalaGrid = document.getElementById("sinhalaGrid");
-            const regularWrapper = document.getElementById("regularContentWrapper");
             
             trendingGrid.innerHTML = "";
             sinhalaGrid.innerHTML = "";
@@ -609,13 +558,21 @@
             }
 
             songs.forEach((song, idx) => {
-                const html = generateSongCardHTML(song, idx);
-                if (song.trending && song.isAvailableOnSite) trendingGrid.innerHTML += html;
-                sinhalaGrid.innerHTML += html;
+                sinhalaGrid.innerHTML += generateSongCardHTML(song, idx);
             });
 
-            const hasTrending = songs.some(s => s.trending && s.isAvailableOnSite);
-            document.getElementById("trendingSection").style.display = hasTrending ? "block" : "none";
+            const sortedByViews = [...songs].sort((a, b) => {
+                let viewsA = (a.views || 0) + (localViews[a.id] || 0);
+                let viewsB = (b.views || 0) + (localViews[b.id] || 0);
+                return viewsB - viewsA;
+            });
+
+            const topTrending = sortedByViews.slice(0, 3);
+            topTrending.forEach((song, idx) => {
+                trendingGrid.innerHTML += generateSongCardHTML(song, idx);
+            });
+
+            document.getElementById("trendingSection").style.display = "block";
         }
 
         function renderArtistsGrid(artistsToRender) {
@@ -672,7 +629,7 @@
                 const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
                 pureGrid.innerHTML = `
                     <div class="animate-fade" style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; background: #11141a; border-radius: 12px; border: 1px dashed #232a38;">
-                        <p style="color: #aaa; margin-bottom: 20px; font-size: 15px;">🚫 මෙම සින්දුව දැනට අපගේ වෙබ් අඩවියේ නැත. සෘජුවම YouTube හරහා නරඹන්න/අසන්න:</p>
+                        <p style="color: #aaa; margin-bottom: 20px; font-size: 15px;">🚫 මෙම සින්දුව දැනට අපගේ... වෙබ් අඩවියේ නැත. සෘජුවම YouTube හරහා නරඹන්න/අසන්න:</p>
                         <div class="yt-preview-card" onclick="window.open('${ytSearchUrl}', '_blank')" style="max-width: 480px;">
                             <div class="thumb-wrapper">
                                 <img src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=1000&auto=format&fit=cover" alt="YouTube">
@@ -715,9 +672,6 @@
             document.getElementById("infoPageView").style.display = "none";
             document.getElementById("contactFormView").style.display = "none";
             
-            if(document.getElementById("detailAudio")) document.getElementById("detailAudio").pause();
-            
-            // පිටුව මාරු වෙද්දී YouTube වීඩියෝ එක නතර කිරීම
             const ytContainer = document.getElementById("ytIframeContainer");
             if(ytContainer) ytContainer.innerHTML = "";
 
@@ -745,6 +699,10 @@
             if (!song) { setHashState('home'); return; }
             currentOpenSong = song;
 
+            if (!localViews[songId]) localViews[songId] = 0;
+            localViews[songId] += 1;
+            localStorage.setItem('lksongs_local_views', JSON.stringify(localViews));
+
             document.getElementById("songDetailView").style.display = "block";
             document.getElementById("navHome").classList.remove("active");
             document.getElementById("serverStatusBox").style.display = "none";
@@ -754,11 +712,9 @@
             document.getElementById("detailArtist").innerHTML = `<i class="fa fa-user" style="cursor:pointer;" onclick="setHashState('artist','${encodeURIComponent(song.artist)}')"></i> ${song.artist}`;
             document.getElementById("detailYear").innerHTML = `<i class="fa fa-calendar-alt"></i> ${song.year}`;
             document.getElementById("detailDuration").innerHTML = `<i class="fa fa-clock"></i> ${song.duration}`;
-            document.getElementById("detailAudio").src = song.audioUrl;
             document.getElementById("detailLyricsDoc").href = song.lyricsFile;
             document.getElementById("detailChordsDoc").href = song.chordsFile;
 
-            // YouTube වීඩියෝව Iframe හරහා ඇතුළත් කිරීම (සයිට් එක ඇතුළෙන්ම Play වීමට)
             let videoId = '';
             if(song.youtubeUrl) {
                 if(song.youtubeUrl.includes('youtu.be/')) videoId = song.youtubeUrl.split('youtu.be/')[1].split('?')[0];
@@ -767,9 +723,9 @@
             
             const ytContainer = document.getElementById("ytIframeContainer");
             if(videoId) {
-                ytContainer.innerHTML = `<iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" src="https://www.youtube.com/embed/${videoId}?autoplay=0" allowfullscreen></iframe>`;
+                ytContainer.innerHTML = `<iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius:12px;" src="https://www.youtube.com/embed/${videoId}?autoplay=0" allowfullscreen></iframe>`;
             } else {
-                ytContainer.innerHTML = `<img src="${song.thumbnail}" alt="No Video Available">`;
+                ytContainer.innerHTML = `<img src="${song.thumbnail}" alt="No Video Available" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">`;
             }
 
             closePreview();
@@ -816,7 +772,6 @@
             if (!currentOpenSong) return;
             previewBox.style.display = "block";
 
-            // Lyrics හෝ Chords හිස් වුවහොත් ඒ සඳහා සුමට විසඳුම
             if (type === 'lyrics') {
                 previewTitle.innerHTML = `<i class="fa fa-eye" style="color:var(--primary-red);"></i> Lyrics Preview`;
                 previewContent.innerText = (currentOpenSong.lyrics && currentOpenSong.lyrics.trim() !== "") ? currentOpenSong.lyrics : "🚫 මෙම ගීතය සඳහා පද (Lyrics) තවමත් ඇතුළත් කර නැත.";
