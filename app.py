@@ -7,6 +7,11 @@ from yt_dlp import YoutubeDL
 
 HTML_FILE = "index.html"
 
+def clean_filename(name):
+    # ෆයිල් නමකට ගන්න පුළුවන් විදිහට ඉංග්‍රීසි අකුරු සහ ඉලක්කම් විතරක් ඉතිරි කර ගැනීම
+    cleaned = re.sub(r'[^a-zA-Z0-9]', '_', name)
+    return cleaned.strip('_')
+
 def clean_youtube_title(title):
     title = re.sub(r'\[.*?\]|\(.*?\)', '', title).strip()
     parts = []
@@ -61,8 +66,8 @@ def extract_youtube_data(url):
             "karaokeSiteUrl": "",
             "lyrics": "",
             "chords": "",
-            "lyricsFile": "lyrics.txt",
-            "chordsFile": "chords.pdf",
+            "lyricsFile": "",
+            "chordsFile": "",
             "trending": True,
             "isAvailableOnSite": True,
             "views": 0
@@ -101,9 +106,9 @@ def inject_and_push_to_cloud(new_song):
 
     try:
         subprocess.run(["git", "add", "."], check=True)
-        subprocess.run(["git", "commit", "-m", f"Auto added song: {new_song['title']}"], check=True)
+        subprocess.run(["git", "commit", "-m", f"Auto added song & files: {new_song['title']}"], check=True)
         subprocess.run(["git", "push", "origin", "main"], check=True)
-        print("⚡🔥 Boom! GitHub එක හරහා මුළු වෙබ් අඩවියම ස්වයංක්‍රීයව ලයිව් අප්ඩේට් වුණා මචං!")
+        print("⚡🔥 Boom! GitHub එක හරහා මුළු වෙබ් අඩවියම සහ Download Files සියල්ලම ලයිව් අප්ඩේට් වුණා මචං!")
         return True
     except Exception as e:
         print(f"❌ Cloud එකට Push කිරීමට නොහැකි විය: {e}")
@@ -140,6 +145,21 @@ if __name__ == "__main__":
             
             song_data["lyrics"] = lyrics_input if lyrics_input else "🚫 මෙම ගීතය සඳහා පද (Lyrics) තවමත් ඇතුළත් කර නැත."
             song_data["chords"] = chords_input if chords_input else "🚫 මෙම ගීතය සඳහා Chords තවමත් ඇතුළත් කර නැත."
+            
+            # 💾 💡 FIX: බටන් එබුවහම Download වෙන්න ඇත්තම ෆයිල්ස් ටික පරිගණකයේ සාදා ගැනීම
+            safe_title = clean_filename(song_data["title"])
+            lyrics_filename = f"{safe_title}_lyrics.txt"
+            chords_filename = f"{safe_title}_chords.txt" # PDF එකක් වෙනුවට ලෙහෙසියෙන්ම Download වෙන්න TXT එකක් හැදුවා
+            
+            with open(lyrics_filename, "w", encoding="utf-8") as lf:
+                lf.write(f"--- {song_data['title']} - LYRICS ---\n\n{song_data['lyrics']}")
+                
+            with open(chords_filename, "w", encoding="utf-8") as cf:
+                cf.write(f"--- {song_data['title']} - CHORDS ---\n\n{song_data['chords']}")
+            
+            # HTML එකට ලින්ක් එක සම්බන්ධ කිරීම
+            song_data["lyricsFile"] = lyrics_filename
+            song_data["chordsFile"] = chords_filename
             
             inject_and_push_to_cloud(song_data)
         except Exception as e:
